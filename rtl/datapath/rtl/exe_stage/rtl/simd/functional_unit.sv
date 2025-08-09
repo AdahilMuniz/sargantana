@@ -41,6 +41,7 @@ bus64_t result_vsaaddsub;
 bus64_t result_vcomp;
 bus64_t result_vshift;
 bus64_t result_vmul;
+bus64_t result_vmcon;
 bus64_t result_vdiv_vrem;
 bus64_t result_vsmul;
 
@@ -58,6 +59,18 @@ logic sat_ovf_saaddsub;
 
 bus128_t full_result_vmul_2;
 logic sat_vsmul;
+
+bus64_t data_vs1_vcomp;
+bus64_t data_vs2_vcomp;
+bus64_t data_vs1_vmul;
+bus64_t data_vs2_vmul;
+
+bus64_t data_vs1_vaddsub;
+bus64_t data_vs2_vaddsub;
+
+instr_type_t vcomp_instr_type;
+instr_type_t vmul_instr_type;
+instr_type_t vaddsub_instr_type;
 
 /* Register fo multiplication + addition/subtract
  * Due to timing problems when doing the addition on the same cycle than the
@@ -151,10 +164,12 @@ always_comb begin
 end
 
 vaddsub vaddsub_inst(
-    .instr_type_i  (sel_out_instr_i.instr.instr_type),
+    .instr_type_i  (vaddsub_instr_type),
     .sew_i         (vaddsub_sew_i),
-    .data_vs1_i    (data1_vaddsub_i),
-    .data_vs2_i    (data2_vaddsub_i),
+    //.data_vs1_i    (data1_vaddsub_i),
+    //.data_vs2_i    (data2_vaddsub_i),
+    .data_vs1_i    (data_vs1_vaddsub),
+    .data_vs2_i    (data_vs2_vaddsub),
     .data_vm       (data_vm[7:0]),
     .use_mask      (sel_out_instr_i.instr.use_mask),
     .data_vd_o     (result_vaddsub)
@@ -178,10 +193,12 @@ vsaaddsub vsaaddsub_inst(
     .sat_ovf_o     (sat_ovf_saaddsub)
 );
 vcomp vcomp_inst(
-    .instr_type_i  (instruction_i.instr.instr_type),
+    .instr_type_i  (vcomp_instr_type),
     .sew_i         (instruction_i.instr.sew),
-    .data_vs1_i    (data_vs1_i),
-    .data_vs2_i    (data_vs2_i),
+    //.data_vs1_i    (data_vs1_i),
+    //.data_vs2_i    (data_vs2_i),
+    .data_vs1_i    (data_vs1_vcomp),
+    .data_vs2_i    (data_vs2_vcomp),
     .data_vd_o     (result_vcomp)
 );
 
@@ -197,10 +214,12 @@ vshift vshift_inst(
 vmul vmul_inst(
     .clk_i         (clk_i),
     .rstn_i        (rstn_i),
-    .instr_type_i  (instruction_i.instr.instr_type),
+    .instr_type_i  (vmul_instr_type),
     .sew_i         (instruction_i.instr.sew),
-    .data_vs1_i    (data_vs1_i),
-    .data_vs2_i    (data2_vmul_i),
+    //.data_vs1_i    (data_vs1_i),
+    //.data_vs2_i    (data2_vmul_i),
+    .data_vs1_i    (data_vs1_vmul),
+    .data_vs2_i    (data_vs2_vmul),
     .data_vd_o     (result_vmul),
     .full_data_o   (full_result_vmul)
 );
@@ -263,6 +282,9 @@ always_comb begin
         end
         VMUL, VMULH, VMULHU, VMULHSU, VWMUL, VWMULU, VWMULSU: begin
             data_vd_o = result_vmul;
+        end
+        VMCON: begin
+            data_vd_o = result_vmcon;
         end
         VSMUL: begin
             data_vd_o = result_vsmul;
@@ -378,5 +400,40 @@ always_comb begin
         end
     endcase
 end
+
+
+vmconv_ctrl vmconv_ctrl_inst
+(
+    .clk_i (clk_i),
+    .rstn_i (rstn_i),
+    .instruction_i (instruction_i),
+    .sel_out_instr_i (sel_out_instr_i),
+    .data_vs1_i (data_vs1_i),
+    .data_vs2_i (data_vs2_i),
+    .data_vm (data_vm),
+
+    .data2_vmul_i(data2_vmul_i),
+    .result_vmul_i(result_vmul),
+
+    .data1_vaddsub_i(data1_vaddsub_i),
+    .data2_vaddsub_i(data2_vaddsub_i),
+    .result_vaddsub_i(result_vaddsub),
+
+    .result_vcomp_i(result_vcomp),
+
+    .data_vs1_vcomp_o (data_vs1_vcomp),
+    .data_vs2_vcomp_o (data_vs2_vcomp),
+    .data_vs1_vmul_o (data_vs1_vmul),
+    .data_vs2_vmul_o (data_vs2_vmul),
+
+    .data_vs1_vaddsub_o(data_vs1_vaddsub),
+    .data_vs2_vaddsub_o(data_vs2_vaddsub),
+
+    .vcomp_instr_type_o (vcomp_instr_type),
+    .vmul_instr_type_o (vmul_instr_type),
+    .vaddsub_instr_type_o (vaddsub_instr_type),
+
+    .result_vmcon_o(result_vmcon)
+);
 
 endmodule

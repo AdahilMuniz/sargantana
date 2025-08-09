@@ -324,6 +324,7 @@ typedef enum logic [5:0] {
     F6_VXOR         = 6'b001011,
     F6_VMERGE_VMV   = 6'b010111,
     F6_VMSEQ        = 6'b011000,
+    F6_VMCON        = 6'b010110,
     F6_VMSNE        = 6'b011001,
     F6_VMSLTU       = 6'b011010,
     F6_VMSLT        = 6'b011011,

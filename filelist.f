@@ -53,6 +53,7 @@
 ./rtl/datapath/rtl/exe_stage/rtl/alu/alu_count_pop.sv
 ./rtl/datapath/rtl/exe_stage/rtl/exe_stage.sv
 ./rtl/datapath/rtl/exe_stage/rtl/branch_unit.sv
+./rtl/datapath/rtl/exe_stage/rtl/simd/vmconv_ctrl.sv
 ./rtl/datapath/rtl/exe_stage/rtl/simd/functional_unit.sv
 ./rtl/datapath/rtl/exe_stage/rtl/simd/vcomp.sv
 ./rtl/datapath/rtl/exe_stage/rtl/simd/vredtree.sv

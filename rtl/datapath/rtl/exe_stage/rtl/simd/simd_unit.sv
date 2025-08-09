@@ -32,7 +32,8 @@
     output exe_wb_simd_instr_t    instruction_simd_o      // Out instruction
 );
 
-localparam MAX_STAGES = $clog2(VLEN/8) + 2; // The vector reduction tree module will have the maximum stages
+//localparam MAX_STAGES = $clog2(VLEN/8) + 2; // The vector reduction tree module will have the maximum stages
+localparam MAX_STAGES = 16;
 localparam int DIV_STAGES = 32;             // number of clocks a DIV/REM instruction takes
 
 
@@ -313,8 +314,15 @@ always_comb begin
             previous_div_is_opvx_d      = previous_div_is_opvx_q;            
             previous_div_instr_type_d   = previous_div_instr_type_q;  
         end                    
-    end 
-    
+    end else if(instruction_i.instr.instr_type == VMCON) begin
+        case (instruction_i.instr.sew)
+            SEW_8  : simd_exe_stages = 6'd4;
+            SEW_16 : simd_exe_stages = 6'd2;
+            SEW_32 : simd_exe_stages = 6'd1;
+            SEW_64 : simd_exe_stages = 6'd1;
+            default : simd_exe_stages = 6'd1;
+        endcase
+    end
     else begin
         simd_exe_stages = 6'd1;
     end

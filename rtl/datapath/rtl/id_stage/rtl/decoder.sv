@@ -835,7 +835,10 @@ module decoder
                                                     decode_instr_int.vregfile_we = ~vl_0;
                                                     decode_instr_int.instr_type = VLE;
                                                     xcpt_illegal_instruction_int = (vill || (vl > (VMAXELEM >> decode_i.inst.vltype.width[13:12])) || //LMUL > 1
-                                                        ((decode_i.inst.vltype.width[13:12] > sew) && ((emul_mask & decode_instr_int.vs1) != 'h0))) ? 1'b1 : 1'b0;                                                 end
+                                                        ((decode_i.inst.vltype.width[13:12] > sew) && ((emul_mask & decode_instr_int.vs1) != 'h0))) ? 1'b1 : 1'b0;
+                                                    //xcpt_illegal_instruction_int = (vill || (vl > (VMAXELEM >> decode_i.inst.vltype.width[13:12]))) ? 1'b1 : 1'b0;
+                                                    //xcpt_illegal_instruction_int = 1'b0;
+                                                    end
                                                 LUMOP_UNIT_STRIDE_WREG: begin
                                                     decode_instr_int.vregfile_we = 1'b1;
                                                     decode_instr_int.instr_type = VL1R;
@@ -1042,6 +1045,10 @@ module decoder
                                     end
                                     F6_VMSEQ: begin
                                         decode_instr_int.instr_type = VMSEQ;
+                                        decode_instr_int.use_old_vd = 1'b0;
+                                    end
+                                    F6_VMCON: begin
+                                        decode_instr_int.instr_type = VMCON;
                                         decode_instr_int.use_old_vd = 1'b0;
                                     end
                                     F6_VMSNE: begin
