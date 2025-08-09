@@ -1,9 +1,9 @@
 [submodule "rtl/csr"]
 	path = rtl/csr
-	url = ../csr.git
+	url = https://github.com/bsc-loca/csr.git
 [submodule "rtl/common_cells"]
 	path = rtl/common_cells
 	url = https://github.com/pulp-platform/common_cells.git
 [submodule "rtl/mmu"]
 	path = rtl/mmu
-	url = ../mmu.git
+	url = https://github.com/bsc-loca/mmu.git
